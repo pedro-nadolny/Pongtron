@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class PlayerHitDetection : MonoBehaviour
 {
+    public GameObject gameManagerObject;
+    private GameManagerScript gameManager;
+
+    private void Start() {
+        gameManager = gameManagerObject.GetComponent<GameManagerScript>();
+    }
 
     private void OnCollisionEnter(Collision other) {
         switch(other.gameObject.tag) {
             case "Ball":
-                StartCoroutine(BallHit(other.gameObject)); 
+                BallHit(other.gameObject); 
                 break;
         }    
     }
 
-    private IEnumerator BallHit(GameObject ball) {
-        print("Ball Hit!");
-        yield return new WaitForSeconds(.7f);
-        ball.GetComponent<BallScripts>().Explode();
-        // yield return new WaitForSeconds(0.3f);
-        GameObject.FindWithTag("BallSpawner").GetComponent<BallSpawner>().SpawnBall();
+    private void BallHit(GameObject ball) {
+        gameManager.Score();
+        StartCoroutine(ball.GetComponent<BallScripts>().Explode());
     }
 }

@@ -9,10 +9,11 @@ public class BallScripts : MonoBehaviour
     public float sidewaySpeed;
     public GameObject explosion;
 
-    private Rigidbody body;
+    private GameManagerScript gameManager;
 
     // Start is called before the first frame update
     private void Start() {
+        gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManagerScript>();
         Vector2 randomSidewaySpeed = Random.insideUnitCircle * sidewaySpeed;
         GetComponent<Rigidbody>().velocity = new Vector3(-perpendicularSpeed, randomSidewaySpeed.x, randomSidewaySpeed.y);
     }
@@ -26,14 +27,15 @@ public class BallScripts : MonoBehaviour
     }
 
     private void SufferedGoal() {
-        print("Suffered Goal!");
-        GameObject.FindWithTag("BallSpawner").GetComponent<BallSpawner>().SpawnBall();
+        Destroy(gameObject);
+        gameManager.Damage();
     }
 
-    public void Explode() {
-        Vector3 currentPosition = GetComponent<Rigidbody>().position;
+    public IEnumerator Explode() {
+        yield return new WaitForSeconds(.7f);
+        Vector3 currentPosition = GetComponent<Transform>().position;
         GetComponent<MeshRenderer>().enabled = false;
-        GameObject explosionObject = Instantiate(explosion, currentPosition, Quaternion.identity);
-        Destroy(explosionObject, 1.5f);
+        Destroy(Instantiate(explosion, currentPosition, Quaternion.identity), 1.5f);
+        Destroy(gameObject);
     } 
 }

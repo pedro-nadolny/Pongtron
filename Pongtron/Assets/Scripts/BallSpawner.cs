@@ -6,24 +6,34 @@ public class BallSpawner : MonoBehaviour {
 
     private Vector3 spawnPosition;
 
-    private GameObject ball;
+    public GameObject ball;
+
+    private bool keepSpawning = false;
 
     void Start() {
-        ball = GameObject.FindWithTag("Ball");
-        spawnPosition = ball.GetComponent<Rigidbody>().position;
-        
+        spawnPosition = ball.GetComponent<Transform>().position;
     }
 
-    private void RepeatSpawn() {
+    public IEnumerator StartAsyncSpawning() {
+        keepSpawning = true; 
+        do {
+            float randomTimeInterval = Random.Range(1, 100)/100.0f + 0.666f;
+            yield return new WaitForSeconds(randomTimeInterval);
+            SpawnBall();
+        } while(keepSpawning);
+    }
 
+    public void StartSpawning() {
+        StartCoroutine(StartAsyncSpawning());
+    }
+
+    public void StopSpawning() {
+        keepSpawning = false; 
     }
     
-    public void SpawnBall() {
+    private void SpawnBall() {
         GameObject newBall = Instantiate(ball, spawnPosition, Quaternion.identity);
-        Destroy(ball);
-        ball = newBall;
         ball.name = "Ball";
         ball.tag = "Ball";
-        ball.GetComponent<MeshRenderer>().enabled = true;
     }
 }

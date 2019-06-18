@@ -9,6 +9,11 @@ TagManager:
   - BallSpawner
   - Score
   - GameManager
+  - Wall
+  - TopWall
+  - Bottom Wall
+  - LeftWall
+  - RightWall
   layers:
   - Default
   - TransparentFX

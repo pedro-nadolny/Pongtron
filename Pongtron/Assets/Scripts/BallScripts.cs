@@ -7,15 +7,22 @@ public class BallScripts : MonoBehaviour
 {
     public float perpendicularSpeed;
     public float sidewaySpeed;
-    public GameObject explosion;
-
+    public GameObject explosion; 
     private GameManagerScript gameManager;
+    private bool willExplode = false;
+    private Rigidbody body;
+    private Vector3 oldVelocity;
 
     // Start is called before the first frame update
     private void Start() {
         gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManagerScript>();
         Vector2 randomSidewaySpeed = Random.insideUnitCircle * sidewaySpeed;
-        GetComponent<Rigidbody>().velocity = new Vector3(-perpendicularSpeed, randomSidewaySpeed.x, randomSidewaySpeed.y);
+        body = GetComponent<Rigidbody>();
+        body.velocity = new Vector3(-perpendicularSpeed, randomSidewaySpeed.x, randomSidewaySpeed.y);
+    }
+
+    private void FixedUpdate() {
+        oldVelocity = body.velocity;
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -31,11 +38,23 @@ public class BallScripts : MonoBehaviour
         gameManager.Damage();
     }
 
-    public IEnumerator Explode() {
-        yield return new WaitForSeconds(.7f);
+    public void ExplodeWithDelay(bool delay) {
+        if (willExplode) return; 
+        willExplode = true;
+        StartCoroutine(ExplodeWithDelayEnumerator(delay));
+    }
+
+    private IEnumerator ExplodeWithDelayEnumerator(bool delay) {
+        if (delay) yield return new WaitForSeconds(.7f); 
         Vector3 currentPosition = GetComponent<Transform>().position;
         GetComponent<MeshRenderer>().enabled = false;
-        Destroy(Instantiate(explosion, currentPosition, Quaternion.identity), 1.5f);
-        Destroy(gameObject);
+        Instantiate(explosion, currentPosition, Quaternion.identity);
+        if (gameObject != null) { 
+            Destroy(gameObject);
+        }
     } 
+
+    public void ReflectBallWithNormal(Vector3 normal) {
+        body.velocity = Vector3.Reflect(oldVelocity, normal);
+    }
 }

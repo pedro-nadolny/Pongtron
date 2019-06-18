@@ -18,9 +18,9 @@ public class BallSpawner : MonoBehaviour {
         keepSpawning = true; 
         do {
             float randomTimeInterval = Random.Range(1, 100)/100.0f + 0.666f;
-            yield return new WaitForSeconds(randomTimeInterval);
             SpawnBall();
-        } while(keepSpawning);
+            yield return new WaitForSeconds(randomTimeInterval);
+        } while(keepSpawning); 
     }
 
     public void StartSpawning() {

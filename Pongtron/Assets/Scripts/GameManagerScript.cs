@@ -20,8 +20,6 @@ public class GameManagerScript : MonoBehaviour
 
     private BallSpawner spawner;
     
-
-   
     void Start() {
         spawner = spawnerGameObject.GetComponent<BallSpawner>();
     }
@@ -63,5 +61,13 @@ public class GameManagerScript : MonoBehaviour
         spawner.StopSpawning();
         startButton.gameObject.SetActive(true);
         startButton.OnDeselect(null);
+
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("Ball");
+        foreach (GameObject ball in balls) {
+            if (ball == null) { continue; }    
+            BallScripts ballScript = ball.GetComponent<BallScripts>();
+            if (ballScript.Equals(null)) return;
+            ballScript.ExplodeWithDelay(false);
+        }
     }
 }

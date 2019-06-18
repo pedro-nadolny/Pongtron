@@ -14,13 +14,17 @@ public class PlayerHitDetection : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
         switch(other.gameObject.tag) {
             case "Ball":
-                BallHit(other.gameObject); 
+                BallHit(other.gameObject, other.contacts[0]); 
                 break;
         }    
     }
 
-    private void BallHit(GameObject ball) {
+    private void BallHit(GameObject ball, ContactPoint contactPoint) {
         gameManager.Score();
-        StartCoroutine(ball.GetComponent<BallScripts>().Explode());
+        if (ball == null) return; 
+        BallScripts ballScripts = ball.GetComponent<BallScripts>();
+        if (ballScripts.Equals(null)) return; 
+        ballScripts.ReflectBallWithNormal(contactPoint.normal);
+        ballScripts.ExplodeWithDelay(true);
     }
 }

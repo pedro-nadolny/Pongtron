@@ -24,7 +24,7 @@ public class PlayerHitDetection : MonoBehaviour
         if (ball == null) return; 
         BallScripts ballScripts = ball.GetComponent<BallScripts>();
         if (ballScripts.Equals(null)) return; 
-        ballScripts.ReflectBallWithNormal(contactPoint.normal);
+        ballScripts.ReflectBallWithNormal(Vector3.right);
         ballScripts.ExplodeWithDelay(true);
     }
 }

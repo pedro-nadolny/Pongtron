@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class BallScripts : MonoBehaviour
 {
     public float perpendicularSpeed;
     public float sidewaySpeed;
-    public GameObject explosion; 
+    public GameObject explosion;
+    public GameObject ballIndicator; 
     private GameManagerScript gameManager;
     private bool willExplode = false;
     private Rigidbody body;
     private Vector3 oldVelocity;
+    private GameObject indicatorInstance;
 
     // Start is called before the first frame update
     private void Start() {
@@ -19,10 +20,13 @@ public class BallScripts : MonoBehaviour
         Vector2 randomSidewaySpeed = Random.insideUnitCircle * sidewaySpeed;
         body = GetComponent<Rigidbody>();
         body.velocity = new Vector3(-perpendicularSpeed, randomSidewaySpeed.x, randomSidewaySpeed.y);
+        Vector3 indicatorPosition = new Vector3(body.position.x, 0, 0);
+        indicatorInstance = Instantiate(ballIndicator, indicatorPosition, Quaternion.identity);
     }
 
     private void FixedUpdate() {
         oldVelocity = body.velocity;
+        indicatorInstance.GetComponent<Rigidbody>().velocity = new Vector3(-perpendicularSpeed, 0, 0);
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -34,24 +38,34 @@ public class BallScripts : MonoBehaviour
     }
 
     private void SufferedGoal() {
-        Destroy(gameObject);
+        if(gameObject) Destroy(gameObject);
+        if (indicatorInstance) Destroy(indicatorInstance);
         gameManager.Damage();
+    }
+
+    public void DisableCollisionDetectionFor(float seconds) {
+        EnumaratorDisableCollisionDetectionFor(seconds);
+    }
+
+    private IEnumerator EnumaratorDisableCollisionDetectionFor(float seconds) {
+        GetComponent<Rigidbody>().detectCollisions = false;
+        yield return new WaitForSeconds(seconds); 
+        GetComponent<Rigidbody>().detectCollisions = true;
     }
 
     public void ExplodeWithDelay(bool delay) {
         if (willExplode) return; 
         willExplode = true;
-        StartCoroutine(ExplodeWithDelayEnumerator(delay));
+        StartCoroutine(EnumeratorExplodeWithDelay(delay));
     }
 
-    private IEnumerator ExplodeWithDelayEnumerator(bool delay) {
+    private IEnumerator EnumeratorExplodeWithDelay(bool delay) {
         if (delay) yield return new WaitForSeconds(.7f); 
         Vector3 currentPosition = GetComponent<Transform>().position;
         GetComponent<MeshRenderer>().enabled = false;
         Instantiate(explosion, currentPosition, Quaternion.identity);
-        if (gameObject != null) { 
-            Destroy(gameObject);
-        }
+        if (gameObject) Destroy(gameObject);
+        if (indicatorInstance) Destroy(indicatorInstance);
     } 
 
     public void ReflectBallWithNormal(Vector3 normal) {

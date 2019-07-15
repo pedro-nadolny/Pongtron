@@ -33,7 +33,7 @@ public class BallSpawner : MonoBehaviour {
     
     private void SpawnBall() {
         GameObject newBall = Instantiate(ball, spawnPosition, Quaternion.identity);
-        ball.name = "Ball";
-        ball.tag = "Ball";
+        newBall.name = "Ball";
+        newBall.tag = "Ball";
     }
 }

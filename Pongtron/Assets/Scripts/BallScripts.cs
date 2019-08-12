@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,8 +8,8 @@ public class BallScripts : MonoBehaviour
     public float sidewaySpeed;
     public GameObject explosion;
     public GameObject ballIndicator; 
+    public bool willExplode = false;
     private GameManagerScript gameManager;
-    private bool willExplode = false;
     private Rigidbody body;
     private Vector3 oldVelocity;
     private GameObject indicatorInstance;

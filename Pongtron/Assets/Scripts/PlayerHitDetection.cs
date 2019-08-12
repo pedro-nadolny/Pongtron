@@ -20,12 +20,12 @@ public class PlayerHitDetection : MonoBehaviour
     }
 
     private void BallHit(GameObject ball, ContactPoint contactPoint) {
-        gameManager.Score();
         if (ball == null) return; 
         BallScripts ballScripts = ball.GetComponent<BallScripts>();
-        if (ballScripts.Equals(null)) return; 
-        ballScripts.ReflectBallWithNormal(Vector3.right);
+        if (ballScripts.Equals(null) || ballScripts.willExplode) return; 
+        gameManager.Score();
         ballScripts.ExplodeWithDelay(true);
-        ballScripts.DisableCollisionDetectionFor(0.1f);
+        ballScripts.ReflectBallWithNormal(Vector3.right);
+        ballScripts.DisableCollisionDetectionFor(.25f);
     }
 }

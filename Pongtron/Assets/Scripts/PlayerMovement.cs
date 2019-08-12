@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour {
 	public GameObject rightWall;
 	public GameObject topWall;
 	public GameObject bottomWall;
+	public GameManagerScript gamaManager;
+
+	private bool firstDrag = true;
 
 	private void Update() {
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -18,6 +21,10 @@ public class PlayerMovement : MonoBehaviour {
 		
 	void OnMouseDrag() {
 		SetPlayerPosition(GetMouseWorldPos() + initialMouseOffset);
+
+		if (!firstDrag) return;	
+		gamaManager.FadeOutInstruction(); 
+		firstDrag = false;
 	}
 
 	private void OnMouseDown() {
